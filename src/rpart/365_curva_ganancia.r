@@ -17,9 +17,9 @@ require("ggplot2")
 
 # cambiar aqui los parametros
 PARAM <- list()
-PARAM$minsplit <- 300
-PARAM$minbucket <- 20
-PARAM$maxdepth <- 11
+PARAM$minsplit <- 1000
+PARAM$minbucket <- 5
+PARAM$maxdepth <- 12
 
 #------------------------------------------------------------------------------
 # particionar agrega una columna llamada fold a un dataset
@@ -114,3 +114,15 @@ print( gra )
 
 cat( "Train gan max: ", dataset[fold==1, max(ganancia_acumulada)], "\n" )
 cat( "Test  gan max: ", dataset[fold==2, max(ganancia_acumulada)], "\n" )
+
+##Corrida 1 
+# cambiar aqui los parametros
+#PARAM <- list()
+#PARAM$minsplit <- 1000
+#PARAM$minbucket <- 5
+#PARAM$maxdepth <- 12
+
+##> cat( "Train gan max: ", dataset[fold==1, max(ganancia_acumulada)], "\n" )
+##Train gan max:  69906000 
+###> cat( "Test  gan max: ", dataset[fold==2, max(ganancia_acumulada)], "\n" )
+##Test  gan max:  45912000 
