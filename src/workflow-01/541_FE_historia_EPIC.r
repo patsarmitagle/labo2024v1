@@ -142,6 +142,23 @@ RatiosEpico <- function(
     }
   }
 }
+RatiosEpico <- function(dataset, cols) {
+  
+  for (i in 1:(length(cols) - 1)) {
+    for (j in (i + 1):length(cols)) {
+      campo_1 <- cols[i]
+      campo_2 <- cols[j]
+
+      nueva_col <- paste(campo_1, campo_2, "ratio", sep = "_")
+      
+      # Calcular el ratio y manejar divisiones por cero
+      dataset[, (nueva_col) := ifelse(get(campo_2) == 0,
+                                      sign(get(campo_1)) * .Machine$double.xmax,
+                                      get(campo_1) / get(campo_2))]
+    }
+  }
+  #return(dataset)
+}
 
 RatiosEpicoDiv0HaceNA <- function(
   dataset, cols
@@ -230,6 +247,7 @@ TendenciaYmuchomas <- function(
         get(campo) / nueva_col[(2 * last + 1):(3 * last)]]
     }
   }
+  return (dataset)
 }
 #------------------------------------------------------------------------------
 # agrega al dataset nuevas variables {0,1}
@@ -493,6 +511,29 @@ cols_lagueables <- copy(setdiff(
 setorderv(dataset, PARAM$dataset_metadata$primarykey)
 
 
+cols_monetarios <- cols_lagueables
+cols_monetarios <- cols_monetarios[cols_monetarios %like%
+  "^(m|Visa_m|Master_m|vm_m|cliente_edad)"]
+
+if (PARAM$RatiosEpico$run) {
+  print("procesando RatiosEpico")
+  OUTPUT$RatiosEpico$ncol_antes <- ncol(dataset)
+  RatiosEpico(dataset, cols_monetarios)
+  OUTPUT$RatiosEpico$ncol_despues <- ncol(dataset)
+  GrabarOutput()
+}
+
+if (PARAM$RatiosEpicoDiv0NA$run) {
+  print("procesando RatiosEpico (si es 0 lo hace NA)")
+  OUTPUT$RatiosEpicoDiv0NA$ncol_antes <- ncol(dataset)
+  RatiosEpicoDiv0HaceNA(dataset, cols_monetarios)
+  OUTPUT$RatiosEpicoDiv0NA$ncol_despues <- ncol(dataset)
+  GrabarOutput()
+}
+
+# esta linea es necesaria?? 
+cols_lagueables <- intersect(cols_lagueables, colnames(dataset))
+
 if (PARAM$lag1) {
   print("procesando lag1")
   # creo los campos lags de orden 1
@@ -690,30 +731,12 @@ setorderv(dataset, PARAM$dataset_metadata$primarykey)
 cols_lagueables <- intersect(cols_lagueables, colnames(dataset))
 
 
-cols_monetarios <- colnames(dataset)
-cols_monetarios <- campos_monetarios[campos_monetarios %like%
-  "^(m|Visa_m|Master_m|vm_m|cliente_edad)"]
 
-if (PARAM$RatiosEpico$run) {
-  print("procesando RatiosEpico")
-  OUTPUT$RatiosEpico$ncol_antes <- ncol(dataset)
-  RatiosEpico(dataset, cols_monetarios)
-  OUTPUT$RatiosEpico$ncol_despues <- ncol(dataset)
-  GrabarOutput()
-}
-
-if (PARAM$RatiosEpicoDiv0NA$run) {
-  print("procesando RatiosEpico (si es 0 lo hace NA)")
-  OUTPUT$RatiosEpicoDiv0NA$ncol_antes <- ncol(dataset)
-  RatiosEpicoDiv0HaceNA(dataset, cols_monetarios)
-  OUTPUT$RatiosEpicoDiv0NA$ncol_despues <- ncol(dataset)
-  GrabarOutput()
-}
 
 if (PARAM$Tendencias1$run) {
   print("procesando tendencias1")
   OUTPUT$TendenciasYmuchomas1$ncol_antes <- ncol(dataset)
-  TendenciaYmuchomas(dataset,
+  dataset <- TendenciaYmuchomas(dataset,
     cols = cols_lagueables,
     ventana = PARAM$Tendencias1$ventana, # 6 meses de historia
     tendencia = PARAM$Tendencias1$tendencia,
@@ -733,7 +756,7 @@ cols_lagueables <- intersect(cols_lagueables, colnames(dataset))
 if (PARAM$Tendencias2$run) {
   print("procesando tendencias2")
   OUTPUT$TendenciasYmuchomas2$ncol_antes <- ncol(dataset)
-  TendenciaYmuchomas(dataset,
+  dataset <- TendenciaYmuchomas(dataset,
     cols = cols_lagueables,
     ventana = PARAM$Tendencias2$ventana, # 6 meses de historia
     tendencia = PARAM$Tendencias2$tendencia,
@@ -747,7 +770,7 @@ if (PARAM$Tendencias2$run) {
   OUTPUT$TendenciasYmuchomas2$ncol_despues <- ncol(dataset)
   GrabarOutput()
 }
-
+print(colnames(dataset))
 #------------------------------------------------------------------------------
 # Agrego variables a partir de las hojas de un Random Forest
 

@@ -132,12 +132,19 @@ FE_historia_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
   param_local$lag1 <- TRUE
   param_local$lag2 <- TRUE # no me engraso con los lags de orden 2
   param_local$lag3 <- TRUE # no me engraso con los lags de orden 3
+  param_local$lag4 <- FALSE # no me engraso con los lags de orden 3
+  param_local$lag5 <- FALSE # no me engraso con los lags de orden 3
+  param_local$lag6 <- FALSE # no me engraso con los lags de orden 3
+  param_local$lag7 <- FALSE # no me engraso con los lags de orden 3
+  param_local$lag8 <- FALSE # no me engraso con los lags de orden 3
+  param_local$lag9 <- FALSE # no me engraso con los lags de orden 3
 
   param_local$RatiosEpico$run <- FALSE
+  param_local$RatiosEpicoDiv0NA$run <- FALSE
 
   # no me engraso las manos con las tendencias
   param_local$Tendencias1$run <- TRUE  # FALSE, no corre nada de lo que sigue
-  param_local$Tendencias1$ventana <- 6
+  param_local$Tendencias1$ventana <- 4
   param_local$Tendencias1$tendencia <- TRUE
   param_local$Tendencias1$minimo <- TRUE
   param_local$Tendencias1$maximo <- TRUE
@@ -147,7 +154,7 @@ FE_historia_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
 
   # no me engraso las manos con las tendencias de segundo orden
   param_local$Tendencias2$run <- TRUE
-  param_local$Tendencias2$ventana <- 6
+  param_local$Tendencias2$ventana <- 7
   param_local$Tendencias2$tendencia <- TRUE
   param_local$Tendencias2$minimo <- TRUE
   param_local$Tendencias2$maximo <- TRUE
