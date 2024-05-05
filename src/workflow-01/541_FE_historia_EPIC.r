@@ -266,7 +266,7 @@ AgregaVarRandomForest <- function(
   azar <- runif(nrow(dataset_rf))
 
   dataset_rf[, entrenamiento :=
-    as.integer(foto_mes >= 202101 & foto_mes <= 202103 &
+    as.integer(foto_mes >= 202009 & foto_mes <= 202105 &
       (clase01 == 1 | azar < 0.10))]
 
   # imputo los nulos, ya que ranger no acepta nulos
