@@ -816,7 +816,7 @@ if (PARAM$CanaritosAsesinos1$ratio > 0.0) {
 }
 
 #------------------------------------------------------------------------------
-# Agrego variables a partir de las hojas de un Random Forest
+# Agrego variables a partir de las hojas de un Random Forest 
 
 if (PARAM$RandomForest$run) {
   print("procesando RandomForest")
